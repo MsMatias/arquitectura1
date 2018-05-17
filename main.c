@@ -3,6 +3,8 @@
 
 /* run this program using the console pauser or add your own getch, system("pause") or input loop */
 
+void salida(unsigned char);
+
 int main(int argc, char *argv[]) {
 	
 	int dato;
@@ -51,8 +53,16 @@ int main(int argc, char *argv[]) {
 	
 	}while(dato < 0 || dato > 5);
 	
+	salida(255);
 	
 	
 	system("PAUSE");
 	return 0;
+}
+
+void salida(unsigned char c){
+	printf("%i \n", c >> 1);
+	printf("%i \n", c >> 2);
+	printf("%i \n", c >> 3);
+	printf("%i \n", c >> 4);
 }
