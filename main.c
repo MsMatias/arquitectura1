@@ -7,6 +7,7 @@ void salida(unsigned char);
 
 int main(int argc, char *argv[]) {
 	
+	int seleccion;
 	int dato;
 	
 	do{
@@ -18,12 +19,11 @@ int main(int argc, char *argv[]) {
 	printf("3) funcion 1\n");
 	printf("4) funcion 2\n");
 	printf("0) Salir\n");
-	printf("Seleccione una opcion: ");
+	printf("Seleccione una opcion: ");	
 	
-	
-	scanf("%i", &dato);
+	scanf("%i", &seleccion);
 
-	switch(dato){
+	switch(seleccion){
 		
 		case 0:
 		break;
@@ -38,10 +38,13 @@ int main(int argc, char *argv[]) {
 		
 		case 3:
 			printf("Seleccionaste funcion 1\n");
+			scanf("%i", &dato);			
+			salida(dato);
 		break;
 		
 		case 4:
 			printf("Seleccionaste funcion 2\n");
+			salida(255);
 		break;
 		
 		default:			
@@ -51,9 +54,7 @@ int main(int argc, char *argv[]) {
 		
 	}	
 	
-	}while(dato < 0 || dato > 5);
-	
-	salida(255);
+	}while(seleccion < 0 || seleccion > 5);
 	
 	
 	system("PAUSE");
@@ -61,8 +62,15 @@ int main(int argc, char *argv[]) {
 }
 
 void salida(unsigned char c){
-	printf("%i \n", c >> 1);
-	printf("%i \n", c >> 2);
-	printf("%i \n", c >> 3);
-	printf("%i \n", c >> 4);
+	
+	int b = 0;
+	
+	for(int i = 0; i < 8; i++){
+		b = (c >> i) & 1;
+		if(b == 1){
+			printf(" * ");
+		}else{
+			printf(" _ ");
+		}
+	}
 }
