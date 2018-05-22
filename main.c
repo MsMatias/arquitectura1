@@ -3,16 +3,40 @@
 
 /* run this program using the console pauser or add your own getch, system("pause") or input loop */
 
+int menu();
+int ingreso();
 void salida(unsigned char);
 
 int main(int argc, char *argv[]) {
 	
+	int estado_ingreso = 0;
+	
+	while(estado_ingreso ){
+		estado_ingreso = ingreso();		
+	}
+	
+	menu();
+		
+	system("PAUSE");
+	
+	return 0;
+}
+
+int ingreso(){
+	
+	int
+	
+	return 0;
+}
+
+int menu (){
+	
+	system("CLS");
+	
 	int seleccion;
 	int dato;
 	
-	do{
-	
-	
+
 	printf("--------------MENU---------------\n");
 	printf("1) Auto fantastico\n");
 	printf("2) La carrera\n");
@@ -26,6 +50,7 @@ int main(int argc, char *argv[]) {
 	switch(seleccion){
 		
 		case 0:
+			return 0;
 		break;
 		
 		case 1:
@@ -44,28 +69,24 @@ int main(int argc, char *argv[]) {
 		
 		case 4:
 			printf("Seleccionaste funcion 2\n");
-			salida(255);
 		break;
 		
-		default:			
-			system("CLS");
+		default:	
 			printf("No seleccionaste ninguna opcion\n");
 		break;
 		
 	}	
-	
-	}while(seleccion < 0 || seleccion > 5);
-	
-	
+
 	system("PAUSE");
-	return 0;
+	menu();
 }
 
 void salida(unsigned char c){
 	
 	int b = 0;
+	int i = 0;
 	
-	for(int i = 0; i < 8; i++){
+	for(i = 0; i < 8; i++){
 		b = (c >> i) & 1;
 		if(b == 1){
 			printf(" * ");
