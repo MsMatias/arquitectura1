@@ -34,13 +34,17 @@ int main(int argc, char *argv[]) {
 
 int ingreso(){	
 	
-	int contador = 0;
+	int error = 0;
 	char* entrada;
 	char caracter;	
 	int c = 0;	
+	int comp;
 	
-	entrada = new char[6];
-	c = 0;
+	
+	do{
+		
+		entrada = new char[6];
+		c = 0;
 	
 	do{		
 		if(caracter = getch()){
@@ -49,16 +53,23 @@ int ingreso(){
 				*(entrada + c) = caracter;
 				c++;
 			}			
-		}
-			
-		
-	}while(caracter != 13);
+		}		
+	}while(caracter != 13);	
 	
-	int comp = strcmp(clave, entrada);
+	comp = strcmp(clave, entrada);
+	
+	if(error > 2)
+		return 0;
 	
 	if(!comp){
 		return 1;
+	}else{
+		system("CLS");
+		printf("Intente nuevamente:\n");
+		error++;
 	}
+		
+	}while(comp > 0 || comp < 0);
 		
 	return 0;
 }
