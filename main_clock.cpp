@@ -186,10 +186,10 @@ int autofantastico(){
 			return 0;
 		}				
 				
-		if(kbhit() && getch() == 72 && velAutofantastico < MAX_VEL)
+		if(kbhit() && getch() == 80 && velAutofantastico < MAX_VEL)
 				velAutofantastico += 10;
 				
-		if(kbhit() && getch() == 80 && velAutofantastico > MIN_VEL)
+		if(kbhit() && getch() == 72 && velAutofantastico > MIN_VEL)
 				velAutofantastico -= 10;
 			
 	}while(1);
