@@ -6,8 +6,10 @@
 
 /* run this program using the console pauser or add your own getch, system("pause") or input loop */
 
-const int MIN_VEL = 100;
-const int MAX_VEL = 50000000;
+const int MIN_VEL = 10;
+const int MAX_VEL = 500;
+
+unsigned t1;
 
 char* clave;
 int velAutofantastico;
@@ -20,7 +22,7 @@ void delay(unsigned long int);
 
 int main(int argc, char *argv[]) {
 	
-	velAutofantastico = 30000000;
+	velAutofantastico = 100;
 	
 	clave = new char[5];
 	
@@ -108,7 +110,8 @@ int menu (){
 			return 0;
 		break;
 		
-		case 1:			
+		case 1:
+			t1=clock();		
 			autofantastico();
 		break;
 		
@@ -142,10 +145,8 @@ void salida(unsigned char c){
 	
 	for(i = 7; i >= 0; i--){
 		if((c >> i) & 1){
-			//system("color 02");		
 			printf("*");			
 		}else{
-			//system("color 08");	
 			printf("_");
 		}					
 	}
@@ -154,36 +155,45 @@ void salida(unsigned char c){
 int autofantastico(){
 		
 	system("CLS");
-	//system("color 07");	
 	printf("Auto Fantastico presiona enter para salir\n");	
 	printf("Flecha arriba aumenta velocidad, flecha abajo disminuye velocidad\n");
 	
+	int i = 1;
+	int estado = 0;
+	
 	do{			
-				
-		for(int i = 1; i < 128; i = i<<1){
+	
+		if(i < 128 && !estado && (clock()-t1) >= velAutofantastico){
 			printf("\r");	
 			salida(i);
-			delay(velAutofantastico);
+			i = i<<1;
+			t1=clock();
+		}else if(i == 128){
+			estado = 1;
 		}
 		
-		for(int i = 128; i > 1; i = i>>1){
+		if(i > 1 && estado && (clock()-t1) >= velAutofantastico){
 			printf("\r");	
 			salida(i);
-			delay(velAutofantastico);
+			i = i>>1;
+			t1=clock();
+		}else if(i == 1){
+			estado = 0;
 		}
 		
-		if(kbhit() && getch() == 13)
-				return 0;
+		if(kbhit() && getch() == 13){
+			system("CLS");
+			return 0;
+		}				
 				
 		if(kbhit() && getch() == 72 && velAutofantastico < MAX_VEL)
-				velAutofantastico += 100;
+				velAutofantastico += 10;
 				
 		if(kbhit() && getch() == 80 && velAutofantastico > MIN_VEL)
-				velAutofantastico -= 100;
+				velAutofantastico -= 10;
 			
 	}while(1);
-	
-	system("CLS");
+		
 }
 
 void delay(unsigned long int a){
