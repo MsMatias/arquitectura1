@@ -3,21 +3,36 @@
 #include <conio.h>
 #include <string.h>
 #include <ctime> 
+#include <windows.h> 
 
 /* run this program using the console pauser or add your own getch, system("pause") or input loop */
 
+ void gotoxy(int x,int y){  
+      HANDLE hcon;  
+      hcon = GetStdHandle(STD_OUTPUT_HANDLE);  
+      COORD dwPos;  
+      dwPos.X = x;  
+      dwPos.Y= y;  
+      SetConsoleCursorPosition(hcon,dwPos);  
+ } 
+ 
+#define ABAJO GetAsyncKeyState(VK_DOWN) & ( 1 << 15 )
+#define ARRIBA GetAsyncKeyState(VK_UP) & ( 1 << 15 )
+#define ENTER GetAsyncKeyState(VK_RETURN) & ( 1 << 15 )
+#define DELAY_TIME 200000000
+
 //CONSTANTES
-const int MIN_VEL = 5;
-const int MAX_VEL = 800;
+const int MIN_VEL = 10;
+const int MAX_VEL = 400;
 
 //Variable de clock
-unsigned long t1;
+unsigned long t1, t0;
 
 //Clave
 char* clave;
 
 //velocidades
-int velocidades[] = {100, 100, 100};
+int velocidades[] = {100, 100, 100, 100};
 
 //Array de datos para la secuencia de luces de el choque
 char datosElchoque[] = { 0x81, 0x42, 0x24, 0x18, 0x18, 0x24, 0x42};
@@ -66,13 +81,30 @@ char datosBillar[] = {0x10
 ,0x00
 };
 
+//Array de datos de tenis
+char datosTenis[] = {
+0x85,
+0x86,
+0x89,
+0x89,
+0x91,
+0x91,
+0xA1,
+0x61,
+0x91,
+0x91,
+0x89,
+0x89
+};
+
 //Declaraciones de firmas de funciones
 int menu();
 int ingreso();
 void salida(unsigned char);
 int autofantastico(int);
-int billar(int);
 int elchoque(int);
+int billar(int);
+int tenis(int);
 void delay(unsigned long int);
 
 int main(int argc, char *argv[]) {
@@ -82,6 +114,9 @@ int main(int argc, char *argv[]) {
 	
 	//Guardamos en clave un dato
 	strcpy(clave, "38411");
+	
+	//Inicializamos contador de deteccion de teclas
+	t0=clock();
 	
 	//Imprimimos mensaje
 	printf("Ingrese la clave: \n");
@@ -111,14 +146,22 @@ int ingreso(){
 		c = 0;
 	
 	do{		
-		if(caracter = getch()){
-			printf("*");
-			if(caracter != 13){
+		if(caracter = getch()){			
+			if(caracter != 13 && caracter != 8 && c < 5){
+				printf("*");
 				*(entrada + c) = caracter;
 				c++;
-			}			
+			}	
+			if(caracter == 8 && c > 0){
+				printf("%c", 8);
+				printf(" ");
+				printf("%c", 8);
+				c--;
+			}		
 		}		
-	}while(caracter != 13);	
+	}while(!(ENTER && (clock()-t0) >= 200));	
+	
+	t0 = clock();
 	
 	comp = strcmp(clave, entrada);
 	
@@ -143,26 +186,43 @@ int menu (){
 	
 	system("CLS");
 	
-	int seleccion;
+	int seleccion = 1;
 	int dato;	
-	
-	do{
-	
-	printf("--------------MENU---------------\n");
-	printf("1) Auto fantastico\n");
-	printf("2) El choque\n");
-	printf("3) Billar\n");
-	printf("4) funcion 2\n");
-	printf("0) Salir\n");
-	printf("Seleccione una opcion: ");	
-	
-	scanf("%i", &seleccion);
-
-	switch(seleccion){
+	int estado = 0;	
 		
-		case 0:
-			return 0;
-		break;
+	gotoxy(0, 0);	
+	printf("--------------MENU---------------\n");
+	printf(">>Auto fantastico\n");
+	printf("- El choque\n");
+	printf("- Billar\n");
+	printf("- Tenis\n");
+	printf("- Salir\n");
+	//printf("Seleccione una opcion: ");	
+	gotoxy(0, seleccion);
+		
+	do{		
+	if(ABAJO && (clock()-t0) >= 200 && seleccion < 5){
+		printf("\r- ");	
+		seleccion++;
+		gotoxy(0, seleccion);
+		printf("\r>>");		
+		t0 = clock();
+	}				
+				
+				
+	if(ARRIBA && (clock()-t0) >= 200 && seleccion > 1){
+		printf("\r- ");	
+		seleccion--;
+		gotoxy(0, seleccion);
+		printf("\r>>");	
+		t0 = clock();
+	}
+	
+	}while(!(ENTER && (clock()-t0) >= 200));
+	
+	delay(DELAY_TIME);
+	
+	switch(seleccion){
 		
 		case 1:
 			t1=clock();		
@@ -180,16 +240,22 @@ int menu (){
 		break;
 		
 		case 4:
-			printf("Seleccionaste funcion 2\n");
+			t1=clock();
+			tenis(seleccion-1);
+		break;
+		
+		case 5:
+			return 0;			
 		break;
 		
 		default:	
 			printf("No seleccionaste ninguna opcion\n");
 		break;
 		
-	}	
-
-	}while(1);
+	}
+	
+	menu();
+	
 }
 
 //Funcion de salida de las luces
@@ -197,7 +263,7 @@ void salida(unsigned char c){
 	
 
 	int i = 0;
-	
+		
 	for(i = 7; i >= 0; i--){
 		if((c >> i) & 1){
 			printf("*");		
@@ -217,14 +283,10 @@ int autofantastico(int v){
 	
 	int i = 1;
 	int estado = 0;
-	
-	int estadoSalida;
-	
+		
 	do{			
-	
-		estadoSalida = (!kbhit() || getch() != 13);	
-	
-		if(i < 128 && !estado && (clock()-t1) >= velocidades[v] && estadoSalida){
+		
+		if(i < 128 && !estado && (clock()-t1) >= velocidades[v]){
 			printf("\r");	
 			salida(i);
 			i = i<<1;
@@ -233,7 +295,7 @@ int autofantastico(int v){
 			estado = 1;
 		}
 		
-		if(i > 1 && estado && (clock()-t1) >= velocidades[v] && estadoSalida){
+		if(i > 1 && estado && (clock()-t1) >= velocidades[v]){
 			printf("\r");	
 			salida(i);
 			i = i>>1;
@@ -242,14 +304,19 @@ int autofantastico(int v){
 			estado = 0;
 		}
 				
-		if(kbhit() && getch() == 80 && velocidades[v] < MAX_VEL)
-				velocidades[v] += 5;
+		if(ABAJO && (clock()-t0) >= 200 && velocidades[v] < MAX_VEL){
+			velocidades[v] += 10;
+			t0 = clock();
+		}
 				
-		if(kbhit() && getch() == 72 && velocidades[v] > MIN_VEL)
-				velocidades[v] -= 5;
+				
+		if(ARRIBA && (clock()-t0) >= 200 && velocidades[v] > MIN_VEL){
+			velocidades[v] -= 10;
+			t0 = clock();
+		}
 			
-	}while(estadoSalida);
-	
+	}while(!(ENTER && (clock()-t0) >= 200));
+	delay(DELAY_TIME);
 	system("CLS");
 	return 0;
 		
@@ -263,13 +330,11 @@ int elchoque(int v){
 	printf("Flecha arriba aumenta velocidad, flecha abajo disminuye velocidad\n");
 	
 	int i = 0;
-	int estadoSalida;
 	
 	do{	
 	
-		estadoSalida = (!kbhit() || getch() != 13);		
 		
-		if((clock()-t1) >= velocidades[v] && estadoSalida){
+		if((clock()-t1) >= velocidades[v]){
 			printf("\r");	
 			salida(datosElchoque[i]);
 			if(i < sizeof(datosElchoque)-1)
@@ -279,14 +344,19 @@ int elchoque(int v){
 			t1=clock();
 		}
 						
-		if(kbhit() && getch() == 80 && velocidades[v] < MAX_VEL)
-				velocidades[v] += 5;
+		if(ABAJO && (clock()-t0) >= 200 && velocidades[v] < MAX_VEL){
+			velocidades[v] += 10;
+			t0 = clock();
+		}
 				
-		if(kbhit() && getch() == 72 && velocidades[v] > MIN_VEL)
-				velocidades[v] -= 5;
+				
+		if(ARRIBA && (clock()-t0) >= 200 && velocidades[v] > MIN_VEL){
+			velocidades[v] -= 10;
+			t0 = clock();
+		}
 			
-	}while(estadoSalida);
-	
+	}while(!(ENTER && (clock()-t0) >= 200));
+	delay(DELAY_TIME);
 	system("CLS");
 	return 0;
 		
@@ -313,14 +383,58 @@ int billar(int v){
 			t1=clock();
 		}
 						
-		if(kbhit() && getch() == 80 && velocidades[v] < MAX_VEL)
-				velocidades[v] += 10;
+		if(ABAJO && (clock()-t0) >= 200 && velocidades[v] < MAX_VEL){
+			velocidades[v] += 10;
+			t0 = clock();
+		}
 				
-		if(kbhit() && getch() == 72 && velocidades[v] > MIN_VEL)
-				velocidades[v] -= 10;
+				
+		if(ARRIBA && (clock()-t0) >= 200 && velocidades[v] > MIN_VEL){
+			velocidades[v] -= 10;
+			t0 = clock();
+		}
 			
-	}while(!kbhit() || getch() != 13);
+	}while(!(ENTER && (clock()-t0) >= 200));
+	delay(DELAY_TIME);
+	system("CLS");
+	return 0;
 	
+}
+
+//Funcion Tenis
+int tenis(int v){
+	
+	system("CLS");
+	printf("Tenis presiona enter para salir\n");	
+	printf("Flecha arriba aumenta velocidad, flecha abajo disminuye velocidad\n");
+	
+	int i = 0;
+	
+	do{			
+		
+		if((clock()-t1) >= velocidades[v]){
+			printf("\r");	
+			salida(datosTenis[i]);
+			if(i < sizeof(datosTenis)-1)
+				i++;
+			else
+				i = 0;			
+			t1=clock();
+		}
+						
+		if(ABAJO && (clock()-t0) >= 200 && velocidades[v] < MAX_VEL){
+			velocidades[v] += 10;
+			t0 = clock();
+		}
+				
+				
+		if(ARRIBA && (clock()-t0) >= 200 && velocidades[v] > MIN_VEL){
+			velocidades[v] -= 10;
+			t0 = clock();
+		}
+			
+	}while(!(ENTER && (clock()-t0) >= 200));
+	delay(DELAY_TIME);
 	system("CLS");
 	return 0;
 	
