@@ -493,19 +493,8 @@ int billar(int v){
 			//Guardamos en t1 el tiempo actual del tiempo que lleva en ejecucion el programa		
 			t1=clock();
 		}
-						
-		if(ABAJO && (clock()-t0) >= 200 && velocidades[v] < MAX_VEL){
-			velocidades[v] += 10;
-			t0 = clock();
-		}
-				
-				
-		if(ARRIBA && (clock()-t0) >= 200 && velocidades[v] > MIN_VEL){
-			velocidades[v] -= 10;
-			t0 = clock();
-		}
 			
-	//Verificamos que presiono la tecla ABAJO, que el debounce se cumplio
+		//Verificamos que presiono la tecla ABAJO, que el debounce se cumplio
 		//y que la velocidad de la secuencia sea menor a MAX_VEL				
 		if(ABAJO && (clock()-t0) >= 200 && velocidades[v] < MAX_VEL){
 			//Incrementamos de a 10 a la velocidad
