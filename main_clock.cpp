@@ -43,47 +43,24 @@ int velocidades[] = {100, 100, 100, 100};
 char datosElchoque[] = { 0x81, 0x42, 0x24, 0x18, 0x18, 0x24, 0x42};
 
 //Array de datos del billar 
-char datosBillar[] = {0x10
-,0x10
-,0x11
-,0x11
-,0x13
-,0x13
-,0x17
-,0x17
-,0x13
-,0x13
-,0x11
-,0x11
-,0x10
-,0x10
-,0x11
-,0x11
-,0x13
-,0x13
-,0x17
-,0x17
-,0x13
-,0x13
-,0x11
-,0x11
-,0x10
-,0x10
-,0x11
-,0x13
-,0x17
-,0x1F
-,0x2F
-,0x4F
-,0x8F
-,0x0F
-,0x07
-,0x07
-,0x03
-,0x03
-,0x01
-,0x01
-,0x00
+char datosBillar[] = {
+0x08,
+0x09,
+0x09,
+0x0B,
+0x0B,
+0x09,
+0x09,
+0x0B,
+0x0B,
+0x09,
+0x0B,
+0x0F,
+0x17,
+0x23,
+0x41,
+0x80,
+0x00
 };
 
 //Array de datos de tenis
@@ -321,6 +298,9 @@ void salida(unsigned char c){
 		}					
 	}
 	
+	//Retornamos carro
+	printf("\r");
+	
 }
 
 
@@ -343,8 +323,6 @@ int autofantastico(int v){
 		//Verificamos que i sea menor a 128 que la secuencia este en estado = 0
 		//y que el tiempo entre secuencia sea mayor o igual a la velocida de la secuencia
 		if(i < 128 && !estado && (clock()-t1) >= velocidades[v]){
-			//Retornamos carro
-			printf("\r");	
 			//Llamamos a la funcion salida
 			salida(i);
 			// Corremos un lugar a la izquierda a i
@@ -359,8 +337,6 @@ int autofantastico(int v){
 		//Verificamos que i sea mayor a 1 que la secuencia este en estado = 1
 		//y que el tiempo entre secuencia sea mayor o igual a la velocida de la secuencia
 		if(i > 1 && estado && (clock()-t1) >= velocidades[v]){
-			//Retornamos carro
-			printf("\r");
 			//Llamamos a la funcion salida	
 			salida(i);
 			// Corremos un lugar a la derecha a i
@@ -418,8 +394,6 @@ int elchoque(int v){
 	
 		//Verificamos que el tiempo entre secuencia sea mayor o igual a la velocida de la secuencia
 		if((clock()-t1) >= velocidades[v]){
-			//Retornamos carro
-			printf("\r");	
 			//Llamamos a la funcion salida
 			salida(datosElchoque[i]);
 			//Verificamos que i sea menor que el tamaño del array unidimensional datosElchoque
@@ -478,9 +452,7 @@ int billar(int v){
 	do{			
 		
 		//Verificamos que el tiempo entre secuencia sea mayor o igual a la velocida de la secuencia
-		if((clock()-t1) >= velocidades[v]){
-			//Retornamos carro
-			printf("\r");	
+		if((clock()-t1) >= velocidades[v]){	
 			//Llamamos a la funcion salida
 			salida(datosBillar[i]);
 			//Verificamos que i sea menor que el tamaño del array unidimensional datosBillar
@@ -539,9 +511,7 @@ int tenis(int v){
 	do{			
 
 		//Verificamos que el tiempo entre secuencia sea mayor o igual a la velocida de la secuencia
-		if((clock()-t1) >= velocidades[v]){
-			//Retornamos carro
-			printf("\r");	
+		if((clock()-t1) >= velocidades[v]){				
 			//Llamamos a la funcion salida
 			salida(datosTenis[i]);
 			//Verificamos que i sea menor que el tamaño del array unidimensional datosTenis
