@@ -17,12 +17,6 @@
       SetConsoleCursorPosition(hcon,dwPos);  
  } 
  
-//Define de deteccion de tecla flecha abajo (el corrimiento del 1 es por que me interesa el bit mas significativo)
-#define ABAJO GetAsyncKeyState(VK_DOWN) & ( 1 << 15 )
-//Define de deteccion de tecla flecha arriba (el corrimiento del 1 es por que me interesa el bit mas significativo)
-#define ARRIBA GetAsyncKeyState(VK_UP) & ( 1 << 15 )
-//Define de deteccion de tecla flecha abajo (el corrimiento del 1 es por que me interesa el bit mas significativo)
-#define ENTER GetAsyncKeyState(VK_RETURN) & ( 1 << 15 )
 //Define de delay
 #define DELAY_TIME 150000000
 
