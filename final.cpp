@@ -2,8 +2,7 @@
 #include <stdlib.h>
 #include <conio.h>
 #include <string.h>
-#include <ctime> 
-#include <windows.h> 
+#include <windows.h>
 
 /* run this program using the console pauser or add your own getch, system("pause") or input loop */
 
@@ -18,15 +17,12 @@
  } 
  
 //Define de delay
-#define DELAY_TIME 150000000
+#define DELAY_TIME 5000
 
 //CONSTANTES
-const int MIN_VEL = 50; //Minima velocidad de refrescamiento de secuencia
-const int MED_VEL = 500; //Maxima velocidad de refrescamiento de secuencia
+const int MIN_VEL = 200; //Minima velocidad de refrescamiento de secuencia
+const int MED_VEL = 1000; //Maxima velocidad de refrescamiento de secuencia
 const int MAX_VEL = 9000; //Maxima velocidad de refrescamiento de secuencia
-
-//Variable de clock
-unsigned long t1, t0;
 
 //Clave
 char* clave;
@@ -81,13 +77,13 @@ char datosTenis[] = {
 };
 
 //Declaraciones de firmas de funciones
-int menu();
+void menu();
 int ingreso();
 void salida(unsigned char);
-int autofantastico(int);
-int elchoque(int);
-int billar(int);
-int tenis(int);
+void autofantastico(int);
+void elchoque(int);
+void billar(int);
+void tenis(int);
 int delay(unsigned long int, int);
 
 int main(int argc, char *argv[]) {
@@ -97,9 +93,6 @@ int main(int argc, char *argv[]) {
 	
 	//Guardamos en clave un dato
 	strcpy(clave, "38411");
-	
-	//Inicializamos contador de deteccion de teclas
-	t0=clock();
 	
 	//Imprimimos mensaje
 	printf("Ingrese la clave: \n");
@@ -158,10 +151,7 @@ int ingreso(){
 				break;
 		}	
 				
-	}while(1); //Siempre y cuando no se presione enter (con un debounce para detectar una pulsacion)	
-	
-	//Guardamos en t0 el tiempo actual del tiempo que lleva en ejecucion el programa
-	t0 = clock();
+	}while(1);	
 	
 	//Comparamos la clave con la clave ingresada
 	comp = strcmp(clave, entrada);
@@ -188,7 +178,7 @@ int ingreso(){
 }
 
 //Funcion de menu
-int menu (){
+void menu (){
 	
 	//Limpiamos consola
 	system("CLS");
@@ -199,98 +189,85 @@ int menu (){
 	
 	do{			
 	
-	printf("--------------MENU---------------\n");
-	printf("- Auto fantastico\n");
-	printf("- El choque\n");
-	printf("- Billar\n");
-	printf("- Tenis\n");
-	printf("- Salir\n");	
+		printf("--------------MENU---------------\n");
+		printf("- Auto fantastico\n");
+		printf("- El choque\n");
+		printf("- Billar\n");
+		printf("- Tenis\n");
+		printf("- Salir\n");	
 	
-	//Desplazamos en puntero
-	gotoxy(0, seleccion);	
-	//Retornamos carro e imprimimos >>
-	printf("\r>>");	
+		//Desplazamos en puntero
+		gotoxy(0, seleccion);	
+		//Retornamos carro e imprimimos >>
+		printf("\r>>");	
 			
-	do{	
+		while(!estado){		
 	
-	//Verificamos que presiono la tecla abajo, que el debounce se cumplio y que seleccion sea menor a 5	
-	if(kbhit()){	
-	if(getch() == 80 &&  seleccion < 5){
-		//Retornamos carro e imprimimos -
-		printf("\r- ");	
-		//Incrementamos seleccion
-		seleccion++;
-		//Desplazamos en puntero
-		gotoxy(0, seleccion);
-		//Retornamos carro e imprimimos >>
-		printf("\r>>");		
-		//Guardamos en t0 el tiempo actual del tiempo que lleva en ejecucion el programa
-	//	t0 = clock();
-	}	
-	}			
-				
-	//Verificamos que presiono la tecla ARRIBA, que el debounce se cumplio y que seleccion sea mayor a 5	
-	if(kbhit()){			
-	if(getch() == 72 &&  seleccion > 1){
-		//Retornamos carro e imprimimos -
-		printf("\r- ");	
-		//Decrementamos seleccion
-		seleccion--;
-		//Desplazamos en puntero
-		gotoxy(0, seleccion);
-		//Retornamos carro e imprimimos >>
-		printf("\r>>");		
-	}
-	}
+			if(kbhit()){
 	
-	if(kbhit()){
-		if(getch() == 13){
-			break;
-		}
-	}
-	
-	}while(1); //Siempre y cuando no se presione enter (con un debounce para detectar una pulsacion)
-	
-	//Delay para el retarde de la llamada a las opciones
-	//delay(DELAY_TIME);
+				printf("\r- ");	
+				char ch = getch();
+            	switch (ch)
+            	{
+            		case 13:				// Enter
+            			estado = 1;
+            		break;            	
+                	case 72:               // Arriba
+                		if(seleccion > 1)
+                   			seleccion--;
+                   	break;
+                	case 80:               // Abajo
+                		if(seleccion < 5)
+                    		seleccion++;
+                    break;
+            	}
+        		gotoxy(0, seleccion); 
+				printf("\r>>");	   
+    		}	
+		
+		} 
+		
+		estado = 0;	
 
-	//Switch de seleccion de opcion
-	switch(seleccion){
+		//Switch de seleccion de opcion
+		switch(seleccion){
 		
-		case 1:			
-			//Llamamos a la funcion auto fantastico
-			autofantastico(seleccion-1);
-		break;
+			case 1:			
+				//Llamamos a la funcion auto fantastico
+				autofantastico(seleccion-1);
+			break;
 		
-		case 2:
-			//Llamamos a la funcion el choque
-			elchoque(seleccion-1);
-		break;
+			case 2:
+				//Llamamos a la funcion el choque
+				elchoque(seleccion-1);
+			break;
 		
-		case 3:
-			//Llamamos a la funcion billar
-			billar(seleccion-1);
-		break;
+			case 3:
+				//Llamamos a la funcion billar
+				billar(seleccion-1);
+			break;
 		
-		case 4:
-			//Llamamos a la funcion tenis
-			tenis(seleccion-1);
-		break;
+			case 4:
+				//Llamamos a la funcion tenis
+				tenis(seleccion-1);
+			break;
 		
-		case 5:
-			//Salimos
-			return 0;			
-		break;
+			case 5:
+				//Salimos
+				return;			
+			break;
 		
-		default:	
-			printf("No seleccionaste ninguna opcion\n");
-		break;
+			default:
+				system("CLS");
+				seleccion = 1;	
+				printf("No seleccionaste ninguna opcion\n");
+			break;
 		
-	}
+		}
 	
 	}while(1);
 	
-	return 0;
+	return;
 }
 
 //Funcion de salida de las luces
@@ -315,7 +292,7 @@ void salida(unsigned char c){
 
 
 //Funcion del auto fantastico
-int autofantastico(int v){
+void autofantastico(int v){
 		
 	//Limpiamos la consola
 	system("CLS");
@@ -328,6 +305,8 @@ int autofantastico(int v){
 	int i = 1;
 	//Inicializamos estado = 0
 	int estado = 0;
+	
+	char opcion;
 		
 	do{			
 							
@@ -340,18 +319,18 @@ int autofantastico(int v){
 			salida(i);
 			estado = delay(velocidades[v], v);
 		}
-			
-	}while(!estado); //Siempre y cuando no se presione enter (con un debounce para detectar una pulsacion)
+
+	}while(!estado);
 	
 	//Limpiamos la consola
 	system("CLS");
 	
-	return 0;
+	return;
 		
 }
 
 //Funcion de el choque
-int elchoque(int v){
+void elchoque(int v){
 		
 	//Limpiamos la consola	
 	system("CLS");
@@ -374,19 +353,17 @@ int elchoque(int v){
 		
 		i = 0;		
 			
-	}while(!estado); //Siempre y cuando no se presione enter (con un debounce para detectar una pulsacion)
+	}while(!estado); 
 	
-	//Delay para el retarde de la llamada a las opciones
-	//delay(DELAY_TIME);
 	//Limpiamos la consola	
 	system("CLS");
 	
-	return 0;
+	return;
 		
 }
 
 //Funcion billar
-int billar(int v){
+void billar(int v){
 	
 	//Limpiamos la consola	
 	system("CLS");
@@ -409,17 +386,17 @@ int billar(int v){
 		
 		i = 0;		
 			
-	}while(!estado); //Siempre y cuando no se presione enter (con un debounce para detectar una pulsacion)
-
+	}while(!estado); 
+	
 	//Limpiamos la consola	
 	system("CLS");
 	
-	return 0;
+	return;
 	
 }
 
 //Funcion Tenis
-int tenis(int v){
+void tenis(int v){
 	
 	//Limpiamos la consola	
 	system("CLS");
@@ -436,7 +413,7 @@ int tenis(int v){
 	do{			
 							
 		for(i = 0; i < sizeof(datosTenis) && !estado; i++){	
-			salida(datosT[i]);
+			salida(datosTenis[i]);
 			estado = delay(velocidades[v], v);
 		}
 		
@@ -447,7 +424,7 @@ int tenis(int v){
 	//Limpiamos la consola	
 	system("CLS");
 	
-	return 0;
+	return;
 	
 }
 
@@ -459,22 +436,30 @@ int delay(unsigned long int a, int v){
 	
 		a--;
 		
-			
-		//Verificamos que presiono la tecla ABAJO, que el debounce se cumplio
-		//y que la velocidad de la secuencia sea menor a MAX_VEL
-		if(kbhit()){
-			if(getch() == 72 && velocidades[v] < MAX_VEL){
-				//Incrementamos de a 10 a la velocidad
-				a-=100;
-				velocidades[v] -= 100;
-			}else if(getch() == 80 && velocidades[v] > MIN_VEL){
-				//Decrementamos de a 10 a la velocidad
-				a+=100;
-				velocidades[v] += 100;
-			}else if(getch() == 13){
-				return 1;
-			}	
-		}
+		if (kbhit())
+        {
+            char ch = getch();
+            switch (ch)
+            {
+            	case 13:				// Enter
+            		a = 0;
+            		return 1;
+            		break;            	
+                case 72:               // Arriba
+                    if(velocidades[v] > MIN_VEL)
+                    {
+                    	a-=100;
+						velocidades[v] -= 100;	
+					}
+                    break;
+                case 80:               // Abajo
+                    if(velocidades[v] < MAX_VEL){
+                    	a+=100;
+						velocidades[v] += 100;
+					}
+                    break;
+            }
+        }
 	} 
 	
 	return 0;
