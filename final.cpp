@@ -20,7 +20,7 @@
 #define DELAY_TIME 5000
 
 //CONSTANTES
-const int MIN_VEL = 200; //Minima velocidad de refrescamiento de secuencia
+const int MIN_VEL = 150; //Minima velocidad de refrescamiento de secuencia
 const int MED_VEL = 1000; //Maxima velocidad de refrescamiento de secuencia
 const int MAX_VEL = 9000; //Maxima velocidad de refrescamiento de secuencia
 
@@ -446,17 +446,16 @@ int delay(unsigned long int a, int v){
             		return 1;
             		break;            	
                 case 72:               // Arriba
-                    if(velocidades[v] > MIN_VEL)
-                    {
-                    	a-=100;
+                    if(velocidades[v] > MIN_VEL)            	
 						velocidades[v] -= 100;	
-					}
+					if(a > MIN_VEL)
+                    	a-=100;
                     break;
                 case 80:               // Abajo
-                    if(velocidades[v] < MAX_VEL){
-                    	a+=100;
+                    if(velocidades[v] < MAX_VEL)                    	
 						velocidades[v] += 100;
-					}
+					if(a < MAX_VEL)
+						a+=100;
                     break;
             }
         }
