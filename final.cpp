@@ -20,12 +20,15 @@
 #define DELAY_TIME 5000
 
 //CONSTANTES
-const int MIN_VEL = 150; //Minima velocidad de refrescamiento de secuencia
-const int MED_VEL = 1000; //Maxima velocidad de refrescamiento de secuencia
-const int MAX_VEL = 9000; //Maxima velocidad de refrescamiento de secuencia
+const int MIN_VEL = 1500; //Minima velocidad de refrescamiento de secuencia
+const int MED_VEL = 2000; //Maxima velocidad de refrescamiento de secuencia
+const int MAX_VEL = 5000; //Maxima velocidad de refrescamiento de secuencia
 
 //Clave
 char* clave;
+
+//Variable de estado de ejecuciones de secuencias
+int ejecucion = 1;
 
 //velocidades
 int velocidades[] = {MED_VEL, MED_VEL, MED_VEL, MED_VEL};
@@ -84,7 +87,8 @@ void autofantastico(int);
 void elchoque(int);
 void billar(int);
 void tenis(int);
-int delay(unsigned long int, int);
+void delay(unsigned long int, int);
+void medidor(int);
 
 int main(int argc, char *argv[]) {
 	
@@ -228,6 +232,7 @@ void menu (){
 		} 
 		
 		estado = 0;	
+		ejecucion = 1;
 
 		//Switch de seleccion de opcion
 		switch(seleccion){
@@ -272,6 +277,8 @@ void menu (){
 
 //Funcion de salida de las luces
 void salida(unsigned char c){
+	
+	gotoxy(0,2);
 		
 	//For decremental
 	for(int i = 7; i >= 0; i--){
@@ -284,10 +291,7 @@ void salida(unsigned char c){
 			printf("_");
 		}					
 	}
-	
-	//Retornamos carro
-	printf("\r");
-	
+		
 }
 
 
@@ -300,27 +304,22 @@ void autofantastico(int v){
 	printf("Auto Fantastico presiona enter para salir\n");	
 	//Imprimimos mensaje
 	printf("Flecha arriba aumenta velocidad, flecha abajo disminuye velocidad\n");
-	
-	//Inicializamos i = 1
-	int i = 1;
-	//Inicializamos estado = 0
-	int estado = 0;
-	
-	char opcion;
-		
-	do{			
+
+	do{	
 							
-		for(int i = 1; i < 128 && !estado; i = i<<1){	
+		for(int i = 1; i < 128 && ejecucion; i = i<<1){	
+			medidor(v);	
 			salida(i);
-			estado = delay(velocidades[v], v);
+			delay(velocidades[v], v);
 		}
 		
-		for(int i = 128; i > 1 && !estado; i = i>>1){			
+		for(int i = 128; i > 1 && ejecucion; i = i>>1){				
+			medidor(v);		
 			salida(i);
-			estado = delay(velocidades[v], v);
+			delay(velocidades[v], v);
 		}
 
-	}while(!estado);
+	}while(ejecucion);
 	
 	//Limpiamos la consola
 	system("CLS");
@@ -338,22 +337,16 @@ void elchoque(int v){
 	printf("El choque presiona enter para salir\n");	
 	//Imprimimos mensaje
 	printf("Flecha arriba aumenta velocidad, flecha abajo disminuye velocidad\n");
-	
-	//Inicializamos i = 1
-	int i = 0;
-	
-	int estado = 0;
-		
-	do{			
-							
-		for(i = 0; i < sizeof(datosElchoque) && !estado; i++){	
-			salida(datosElchoque[i]);
-			estado = delay(velocidades[v], v);
-		}
-		
-		i = 0;		
 			
-	}while(!estado); 
+	do{		
+							
+		for(int i = 0; i < sizeof(datosElchoque) && ejecucion; i++){		
+			medidor(v);		
+			salida(datosElchoque[i]);
+			delay(velocidades[v], v);
+		}	
+		
+	}while(ejecucion); 
 	
 	//Limpiamos la consola	
 	system("CLS");
@@ -371,22 +364,16 @@ void billar(int v){
 	printf("Billar presiona enter para salir\n");	
 	//Imprimimos mensaje
 	printf("Flecha arriba aumenta velocidad, flecha abajo disminuye velocidad\n");
-	
-	//Inicializamos i = 1
-	int i = 0;
-	
-	int estado = 0;
 		
-	do{			
-							
-		for(i = 0; i < sizeof(datosBillar) && !estado; i++){	
+	do{	
+								
+		for(int i = 0; i < sizeof(datosBillar) && ejecucion; i++){	
+			medidor(v);	
 			salida(datosBillar[i]);
-			estado = delay(velocidades[v], v);
-		}
-		
-		i = 0;		
-			
-	}while(!estado); 
+			delay(velocidades[v], v);
+		}	
+					
+	}while(ejecucion); 
 	
 	//Limpiamos la consola	
 	system("CLS");
@@ -404,22 +391,16 @@ void tenis(int v){
 	printf("Tenis presiona enter para salir\n");
 	//Imprimimos mensaje
 	printf("Flecha arriba aumenta velocidad, flecha abajo disminuye velocidad\n");
-	
-	//Inicializamos i = 1	
-	int i = 0;
-	
-	int estado = 0;
-		
+
 	do{			
 							
-		for(i = 0; i < sizeof(datosTenis) && !estado; i++){	
+		for(int i = 0; i < sizeof(datosTenis) && ejecucion; i++){	
+			medidor(v);	
 			salida(datosTenis[i]);
-			estado = delay(velocidades[v], v);
+			delay(velocidades[v], v);
 		}
-		
-		i = 0;		
-			
-	}while(!estado);
+					
+	}while(ejecucion);
 	
 	//Limpiamos la consola	
 	system("CLS");
@@ -429,7 +410,7 @@ void tenis(int v){
 }
 
 //Funcion delay (retardo)
-int delay(unsigned long int a, int v){
+void delay(unsigned long int a, int v){
 		
 
 	while(a){
@@ -443,7 +424,8 @@ int delay(unsigned long int a, int v){
             {
             	case 13:				// Enter
             		a = 0;
-            		return 1;
+            		ejecucion = 0;
+            		return;
             		break;            	
                 case 72:               // Arriba
                     if(velocidades[v] > MIN_VEL)            	
@@ -455,12 +437,27 @@ int delay(unsigned long int a, int v){
                     if(velocidades[v] < MAX_VEL)                    	
 						velocidades[v] += 100;
 					if(a < MAX_VEL)
-						a+=100;
+						a+=100;						
                     break;
+                default:
+                	break;
             }
         }
 	} 
 	
-	return 0;
+}
+
+void medidor(int v){
 	
+	gotoxy(6,4);
+	printf("Velocidad de la secuencia");
+	gotoxy(0,5);
+	for(int i = MAX_VEL; i >= MIN_VEL; i-=100){
+		if(i < velocidades[v] || i > velocidades[v]){
+			printf("=");
+		}else{
+			printf("0");
+		}
+	}
+	gotoxy(0,2);
 }
