@@ -19,6 +19,13 @@
 //Define de delay
 #define DELAY_TIME 5000
 
+#define TEXTO_VERDE SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_GREEN|FOREGROUND_INTENSITY);
+#define TEXTO_NEGRO SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY);
+#define TEXTO_ROJO SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED|FOREGROUND_INTENSITY);
+#define FONDO_BLANCO SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_BLUE | BACKGROUND_INTENSITY);
+#define DEFAULT SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+
+
 //CONSTANTES
 const int MIN_VEL = 1500; //Minima velocidad de refrescamiento de secuencia
 const int MED_VEL = 2000; //Maxima velocidad de refrescamiento de secuencia
@@ -190,12 +197,11 @@ void menu (){
 	
 	int seleccion = 1;
 	int dato;	
-	int estado = 0;	
-	SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_BLUE | BACKGROUND_INTENSITY);
+	int estado = 0;		
 	do{			
-		SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_GREEN | BACKGROUND_RED | BACKGROUND_BLUE | BACKGROUND_INTENSITY); 
+		FONDO_BLANCO
 		printf("--------------MENU---------------\n");
-		SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY); 
+		DEFAULT
 				
 		printf("- Auto fantastico\n");
 		printf("- El choque\n");
@@ -290,12 +296,14 @@ void salida(unsigned char c){
 		//Verificamos el resultado del corrimiento de c & 1
 		if((c >> i) & 1){
 			//Imprimimos un *
-			SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_GREEN|FOREGROUND_RED|FOREGROUND_INTENSITY); 
+			TEXTO_VERDE
 			printf("*");		
-			SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED|FOREGROUND_BLUE|FOREGROUND_GREEN|FOREGROUND_INTENSITY);
+			DEFAULT
 		}else{
 			//Imprimimo un _
+			TEXTO_NEGRO
 			printf("_");
+			DEFAULT
 		}					
 	}
 		
@@ -483,13 +491,13 @@ void medidor(int v){
 	
 	for(int i = MAX_VEL; i >= MIN_VEL; i-=100){
 		if(i < velocidades[v] || i > velocidades[v]){
-			SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_GREEN|FOREGROUND_INTENSITY); 
+			TEXTO_VERDE
 			printf("=");
-			SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_BLUE);			
+			DEFAULT		
 		}else{
-			SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED|FOREGROUND_INTENSITY); 
+			TEXTO_ROJO
 			printf("#");
-			SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_BLUE);
+			DEFAULT
 		}
 	}
 	gotoxy(0,2);
