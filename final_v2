@@ -27,18 +27,18 @@
 
 
 //CONSTANTES
-const int MIN_VEL = 1500; //Minima velocidad de refrescamiento de secuencia
-const int MED_VEL = 2000; //Maxima velocidad de refrescamiento de secuencia
-const int MAX_VEL = 5000; //Maxima velocidad de refrescamiento de secuencia
+const int MIN_VEL = 2200; //Minima velocidad de refrescamiento de secuencia
+const int MED_VEL = 4200; //Maxima velocidad de refrescamiento de secuencia
+const int MAX_VEL = 5700; //Maxima velocidad de refrescamiento de secuencia
 
 //Clave
-char* clave;
+char clave[5];
 
 //Variable de estado de ejecuciones de secuencias
 int ejecucion = 1;
 
 //velocidades
-int velocidades[] = {MED_VEL, MED_VEL, MED_VEL, MED_VEL};
+int velocidades[] = {MED_VEL, MED_VEL, MED_VEL, MED_VEL, MED_VEL};
 
 //Array de datos para la secuencia de luces de el choque
 char datosElchoque[] = { 0x81, 0x42, 0x24, 0x18, 0x18, 0x24, 0x42};
@@ -86,6 +86,18 @@ char datosTenis[] = {
 0x89
 };
 
+//Array de datos de canicas
+char datosCanicas[] = {
+0x3C,
+0x3A,
+0x39,
+0x3A,
+0x3C,
+0x5C,
+0x9C,
+0x5C
+};
+
 //Declaraciones de firmas de funciones
 void menu();
 int ingreso();
@@ -94,13 +106,11 @@ void autofantastico(int);
 void elchoque(int);
 void billar(int);
 void tenis(int);
+void canicas(int);
 void delay(unsigned long int, int);
 void medidor(int);
 
 int main(int argc, char *argv[]) {
-	
-	//Asignamos espacio de memoria al puntero clave
-	clave = new char[5];
 	
 	//Guardamos en clave un dato
 	strcpy(clave, "38411");
@@ -122,15 +132,13 @@ int main(int argc, char *argv[]) {
 int ingreso(){	
 	
 	int error = 0;
-	char* entrada;
+	char entrada[5];
 	char caracter;	
 	int c = 0;	
 	int comp;
 		
-	do{
-		
-		//Asignacion de memoria a entrada
-		entrada = new char[5];
+	do{		
+	
 		//Inicializamos al contador c = 0
 		c = 0;
 	
@@ -139,11 +147,10 @@ int ingreso(){
 		if(caracter = getch()){	
 			//Verificamos que la tecla no sea ni ENTER ni BACKSPACE y que el contador sea menor a 5	
 			if(caracter != 13 && caracter != 8 && c < 5){
-				//Imprimimos un * por cada tecla presionada
-				
+				//Imprimimos un * por cada tecla presionada				
 				printf("*");
 				//Guardamos en caracter en el char point
-				*(entrada + c) = caracter;
+				entrada[c] = caracter;
 				//Incrementamos al contador c
 				c++;
 			}	
@@ -184,7 +191,7 @@ int ingreso(){
 	if(error > 2)
 		return 0;
 		
-	}while(comp > 0 || comp < 0); //Siempre y cuando la comparacion sea mayor a 0 (clave > entrada) o menor a 0 (clave < entrada)
+	}while(comp != 0); //Siempre y cuando la comparacion sea mayor a 0 (clave > entrada) o menor a 0 (clave < entrada)
 		
 	return 0;
 }
@@ -207,6 +214,7 @@ void menu (){
 		printf("- El choque\n");
 		printf("- Billar\n");
 		printf("- Tenis\n");
+		printf("- Canicas\n");
 		printf("- Salir\n");	
 
 		//Desplazamos en puntero
@@ -231,7 +239,7 @@ void menu (){
                    			seleccion--;
                    	break;
                 	case 80:               // Abajo
-                		if(seleccion < 5)
+                		if(seleccion < 6)
                     		seleccion++;
                     break;
             	}
@@ -266,8 +274,13 @@ void menu (){
 				//Llamamos a la funcion tenis
 				tenis(seleccion-1);
 			break;
-		
+			
 			case 5:
+				//Llamamos a la funcion canicas
+				canicas(seleccion-1);
+			break;
+		
+			case 6:
 				//Salimos
 				return;			
 			break;
@@ -316,7 +329,7 @@ void autofantastico(int v){
 	//Limpiamos la consola
 	system("CLS");
 	//Imprimimos mensaje
-	printf("Auto Fantastico presiona enter para salir\n");	
+	printf("Auto Fantastico presiona enter para volver al menu\n");	
 	//Imprimimos mensaje
 	printf("Flecha arriba aumenta velocidad, flecha abajo disminuye velocidad\n");
 	
@@ -355,7 +368,7 @@ void elchoque(int v){
 	//Limpiamos la consola	
 	system("CLS");
 	//Imprimimos mensaje
-	printf("El choque presiona enter para salir\n");	
+	printf("El choque presiona enter para volver al menu\n");	
 	//Imprimimos mensaje
 	printf("Flecha arriba aumenta velocidad, flecha abajo disminuye velocidad\n");
 	
@@ -387,7 +400,7 @@ void billar(int v){
 	//Limpiamos la consola	
 	system("CLS");
 	//Imprimimos mensaje
-	printf("Billar presiona enter para salir\n");	
+	printf("Billar presiona enter para volver al menu\n");	
 	//Imprimimos mensaje
 	printf("Flecha arriba aumenta velocidad, flecha abajo disminuye velocidad\n");
 		
@@ -419,7 +432,7 @@ void tenis(int v){
 	//Limpiamos la consola	
 	system("CLS");
 	//Imprimimos mensaje
-	printf("Tenis presiona enter para salir\n");
+	printf("Tenis presiona enter para volver al menu\n");
 	//Imprimimos mensaje
 	printf("Flecha arriba aumenta velocidad, flecha abajo disminuye velocidad\n");
 							
@@ -432,6 +445,38 @@ void tenis(int v){
 		delay(velocidades[v], v);
 	
 		if(i == sizeof(datosTenis)-1)
+			i = 0;
+		else
+			i++;
+					
+	}while(ejecucion);
+	
+	//Limpiamos la consola	
+	system("CLS");
+	
+	return;
+	
+}
+
+//Funcion Canicas
+void canicas(int v){
+	
+	//Limpiamos la consola	
+	system("CLS");
+	//Imprimimos mensaje
+	printf("Canicas presiona enter para volver al menu\n");
+	//Imprimimos mensaje
+	printf("Flecha arriba aumenta velocidad, flecha abajo disminuye velocidad\n");
+							
+	int i = 0;
+			
+	do{		
+	
+		medidor(v);		
+		salida(datosCanicas[i]);
+		delay(velocidades[v], v);
+	
+		if(i == sizeof(datosCanicas)-1)
 			i = 0;
 		else
 			i++;
