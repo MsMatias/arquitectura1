@@ -117,7 +117,7 @@ int main(int argc, char *argv[]) {
 	
 	//Imprimimos mensaje
 	printf("Ingrese la clave: \n");
-	
+
 	//Verificacion de ingreso de clave (3 intentos)
 	if(ingreso()){
 		menu();
@@ -204,7 +204,8 @@ void menu (){
 	
 	int seleccion = 1;
 	int dato;	
-	int estado = 0;		
+	int estado = 0;	
+	unsigned char ch1, ch2;		
 	do{			
 		FONDO_BLANCO
 		printf("--------------MENU---------------\n");
@@ -223,28 +224,33 @@ void menu (){
 	
 		printf("\r>>");	
 
-		while(!estado){		
+		while(!estado){	
 	
-			if(kbhit()){
-	
-				printf("\r- ");	
-				char ch = getch();
-            	switch (ch)
-            	{
-            		case 13:				// Enter
-            			estado = 1;
-            		break;            	
-                	case 72:               // Arriba
-                		if(seleccion > 1)
-                   			seleccion--;
-                   	break;
-                	case 80:               // Abajo
-                		if(seleccion < 6)
-                    		seleccion++;
-                    break;
-            	}
-        		gotoxy(0, seleccion); 
-				printf("\r>>");	   
+			if(kbhit()){				
+				ch1 = getch();
+				if(ch1 == 224 || ch1 == 0){
+					printf("\r- ");	
+					ch2 = getch();						
+					
+            		switch (ch2)
+            		{          	
+                		case 72:               // Arriba
+                			if(seleccion > 1)
+                   				seleccion--;
+                   		break;
+                		case 80:               // Abajo
+                			if(seleccion < 6)
+                    			seleccion++;
+                    	break;
+                    	default:
+                    	break;
+            		}
+        			gotoxy(0, seleccion); 
+					printf("\r>>");	
+					 
+				}else if(ch1 == 13)
+					estado = 1;	
+					
     		}	
 		
 		} 
@@ -492,22 +498,28 @@ void canicas(int v){
 
 //Funcion delay (retardo)
 void delay(unsigned long int a, int v){
+	
+	unsigned char ch1;
+    unsigned char ch2;
 		
-
 	while(a){
 	
 		a--;
 		
 		if (kbhit())
         {
-            char ch = getch();
-            switch (ch)
-            {
-            	case 13:				// Enter
-            		a = 0;
-            		ejecucion = 0;
-            		return;
-            		break;            	
+            ch1 = getch();
+			if(ch1 == 224 || ch1 == 0)
+				ch2 = getch();
+		 		
+			if(ch1 == 13){				// Enter
+				a = 0;
+            	ejecucion = 0;
+            	return;
+			}
+			
+           switch (ch2)
+            {  	
                 case 72:               // Arriba
                     if(velocidades[v] > MIN_VEL)            	
 						velocidades[v] -= 100;	
@@ -522,8 +534,8 @@ void delay(unsigned long int a, int v){
                     break;
                 default:
                 	break;
-            }
-        }
+            } 	
+        }     
 	} 
 	
 }
